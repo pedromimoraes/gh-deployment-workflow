@@ -1,0 +1,26 @@
+name: Deploy a static content to the GitHub Pages
+
+# Trigger
+on:
+  push:
+    branches: ['main']
+    paths: ['index.html']
+
+permissions:
+  contents: read # permissão para ler e copiar os arquivos do meu repositório
+  pages: write # permissão para alterar os arquivos do pages
+  id-token: write
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # Abre o repositório dentro da VM do GitHub
+      - uses: actions/configure-pages@v4 # Prepara a VM para o GitHub Pages
+      - uses: actions/upload-pages-artifact@v3 # Empacota os arquivos e envia para os servidores do GitHub
+        with:
+          path: '.' # Indica para fazer upload do arquivo na pasta raiz
+      - id: deployment
+        uses: actions/deploy-pages@v4
